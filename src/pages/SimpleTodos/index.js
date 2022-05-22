@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import s from "./Todos.module.css";
+import s from "./SimpleTodos.module.css";
 
-function Todos() {
+function SimpleTodos() {
   const [todos, setTodos] = useState(null);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -94,4 +94,4 @@ function Todos() {
   );
 }
 
-export default Todos;
+export default SimpleTodos;
