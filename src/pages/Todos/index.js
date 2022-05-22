@@ -1,62 +1,97 @@
 import { useEffect, useState } from "react";
+import s from "./Todos.module.css";
 
 function Todos() {
-    const [todos, setTodos] = useState(null);
-    const [title, setTitle] = useState('');
+  const [todos, setTodos] = useState(null);
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
 
-    const fetchTodos = async () => {
-        const response = await fetch('http://localhost:1337/api/todos');
-        const data = await response.json();
+  const fetchTodos = async () => {
+    const response = await fetch("http://localhost:1337/api/todos");
+    const data = await response.json();
 
-        setTodos(data.data);
-    }
+    setTodos(data.data);
+  };
 
-    const postTodo = async (todo) => {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos', {
-            method: 'POST',
-            body: JSON.stringify(todo)
-        });
+  const postTodo = async (todo) => {
+    const response = await fetch("http://localhost:1337/api/todos", {
+      method: "POST",
+      body: JSON.stringify({ data: todo }),
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+    });
 
-        const data = await response.json();
+    const data = await response.json();
+    console.log(data);
 
-        fetchTodos();
-    }
+    fetchTodos();
+  };
 
-    const addTodo = (e) => {
-        e.preventDefault();
+  const addTodo = (e) => {
+    e.preventDefault();
 
-        const newTodo = {title: title, completed: false};
+    const newTodo = { title, text, isCompleted: false };
 
-        postTodo(newTodo);
-    }
+    postTodo(newTodo);
+  };
 
-    useEffect(() => {
-        fetchTodos();
-    }, []);
+  const deleteTodo = async (todoId) => {
+    const response = await fetch(`http://localhost:1337/api/todos/${todoId}`, {
+      method: "DELETE",
+    });
 
-    return (
-        <div>
-            <h3>Todo List</h3>
+    const data = await response.json();
 
-            <div>
-                <form onSubmit={addTodo}>
-                    <div>
-                        <label htmlFor="todo-title">Todo Title</label>
-                        <input 
-                            id='todo-title'
-                            placeholder="Enter your todo title..." 
-                            type='text' 
-                            onChange={e => setTitle(e.target.value)} 
-                            value={title} />
-                    </div>
+    console.log(data);
+    fetchTodos();
+  };
 
-                    <button type="submit">Add Todo</button>
-                </form>
-            </div>
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
-            {todos && todos.map(todo => <p key={todo.id}>{todo.attributes.title}</p>)}
-        </div>
-    )
+  return (
+    <div>
+      <h3>Todo List</h3>
+
+      <div>
+        <form onSubmit={addTodo}>
+          <div className={s.formGroup}>
+            <label htmlFor="todo-title">Todo Title</label>
+            <input
+              id="todo-title"
+              placeholder="Enter your todo title..."
+              type="text"
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
+            />
+          </div>
+
+          <div className={s.formGroup}>
+            <label htmlFor="todo-text">Todo Text</label>
+            <textarea
+              id="todo-text"
+              placeholder="Enter your todo text..."
+              type="text"
+              onChange={(e) => setText(e.target.value)}
+              value={text}
+            ></textarea>
+          </div>
+
+          <button type="submit">Add Todo</button>
+        </form>
+      </div>
+
+      {todos &&
+        todos.map((todo) => (
+          <p key={todo.id}>
+            {todo.attributes.title}
+            <button onClick={() => deleteTodo(todo.id)}>DEL</button>
+          </p>
+        ))}
+    </div>
+  );
 }
 
 export default Todos;

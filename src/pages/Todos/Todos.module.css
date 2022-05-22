@@ -1,0 +1,7 @@
+.formGroup > input,
+.formGroup > textarea {
+  display: block;
+  margin: 10px 0;
+  min-width: 250px;
+  resize: vertical;
+}
